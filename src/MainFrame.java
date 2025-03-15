@@ -30,13 +30,14 @@ class MainFrame extends JFrame {
         JMenuItem loadItem = new JMenuItem("Load from File");
         JMenuItem exitItem = new JMenuItem("Exit");
 
+        // Action listeners for menu items
         saveItem.addActionListener(e -> contactBookManager.saveToFile(this));
         loadItem.addActionListener(e -> loadPhoneBook());
-        exitItem.addActionListener(e -> System.exit(0));
+        exitItem.addActionListener(e -> System.exit(0)); // Exit the application
 
         fileMenu.add(saveItem);
         fileMenu.add(loadItem);
-        fileMenu.add(exitItem);
+        fileMenu.add(exitItem); // Add the Exit item to the menu
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
 
@@ -122,7 +123,7 @@ class MainFrame extends JFrame {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                label.setBackground(new Color(221, 255, 221)); // Light grey color for first row
+                label.setBackground(new Color(221, 255, 221)); // Light GREEN color for first row
 
                 // Set foreground color for selected rows
                 if (isSelected) {
