@@ -1,0 +1,8 @@
+-   repo: local
+    hooks:
+      -   id: filter-names
+          name: Filter names and patterns in all files
+          entry: python3 filter_secrets.py
+          language: system  # This will use the system Python
+          files: .+  # Match all files (including .java, .md, etc.)
+          types: [text]
