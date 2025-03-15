@@ -32,7 +32,7 @@ class ContactBookManager {
 
     public void saveToFile(Component parent) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("[redacted]");
+        fileChooser.setDialogTitle("Save to File");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setFileFilter(new FileNameExtensionFilter("CSV, TXT, or MD Files", "csv", "txt", "md"));
 
@@ -47,7 +47,7 @@ class ContactBookManager {
             }
 
             try (FileWriter writer = new FileWriter(fileToSave)) {
-                writer.append("Name,[redacted]\n");
+                writer.append("Name,Phone Number\n");
                 for (ContactBookEntry entry : entries) {
                     writer.append(entry.getName()).append(",").append(entry.getPhoneNumber()).append("\n");
                 }
@@ -60,7 +60,7 @@ class ContactBookManager {
 
     public void loadFromFile(Component parent) {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("[redacted]");
+        fileChooser.setDialogTitle("Load CSV file");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setFileFilter(new FileNameExtensionFilter("CSV Files", "csv"));
 

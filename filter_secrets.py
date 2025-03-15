@@ -12,7 +12,7 @@ def check_commit_changes():
     # Loop through files and check for the patterns
     for file in files_to_check:
         # Only process text files (skip binary files)
-        if os.path.splitext(file)[1] in ['.java', '.md', '.txt', '.py']:  # Add more file extensions as needed
+        if os.path.splitext(file)[1] in ['.md', '.txt', '.py']:  # Add more file extensions as needed
             try:
                 with open(file, 'r', encoding='utf-8') as f:
                     content = f.read()

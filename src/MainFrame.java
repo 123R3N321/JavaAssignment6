@@ -42,14 +42,14 @@ class MainFrame extends JFrame {
         JTextField nameField = new JTextField();
         JTextField phoneField = new JTextField();
         JButton addButton = new JButton("Add");
-        JButton deleteButton = new JButton("[redacted]");
-        JButton deleteAllButton = new JButton("[redacted]");
+        JButton deleteButton = new JButton("Delete");
+        JButton deleteAllButton = new JButton("Delete All");
 
         inputPanel.add(new JLabel("Search:"));
         inputPanel.add(searchField);
         inputPanel.add(new JLabel("Name:"));
         inputPanel.add(nameField);
-        inputPanel.add(new JLabel("[redacted]:"));
+        inputPanel.add(new JLabel("Phone Number:"));
         inputPanel.add(phoneField);
         inputPanel.add(addButton);
         inputPanel.add(deleteButton);
@@ -80,7 +80,7 @@ class MainFrame extends JFrame {
         });
 
         deleteAllButton.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete all entries?", "[redacted]", JOptionPane.YES_NO_OPTION);
+            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete all entries?", "Delete All? Sure???", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 contactBookManager.clearEntries();
                 listModel.clear();
