@@ -15,8 +15,8 @@ class MainFrame extends JFrame {
         phoneBookList = new JList<>(listModel);
         searchField = new JTextField();
 
-        setTitle("PhoneBook App");
-        setSize(400, 300);
+        setTitle("Contact Book");
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -38,25 +38,27 @@ class MainFrame extends JFrame {
         setJMenuBar(menuBar);
 
         // Input panel
-        JPanel inputPanel = new JPanel(new GridLayout(5, 2));
+        JPanel inputPanel = new JPanel(new GridLayout(4, 2));
+        JPanel buttonPanel = new JPanel(new BorderLayout());
         JTextField nameField = new JTextField();
         JTextField phoneField = new JTextField();
         JButton addButton = new JButton("Add");
-        JButton deleteButton = new JButton("Delete");
+        JButton deleteButton = new JButton("Delete Selected");
         JButton deleteAllButton = new JButton("Delete All");
 
         inputPanel.add(new JLabel("Search:"));
         inputPanel.add(searchField);
-        inputPanel.add(new JLabel("Name:"));
+        inputPanel.add(new JLabel("Enter Name:"));
         inputPanel.add(nameField);
-        inputPanel.add(new JLabel("Phone Number:"));
+        inputPanel.add(new JLabel("Enter Phone Number:"));
         inputPanel.add(phoneField);
         inputPanel.add(addButton);
         inputPanel.add(deleteButton);
-        inputPanel.add(deleteAllButton);
+        buttonPanel.add(deleteAllButton);
 
         add(new JScrollPane(phoneBookList), BorderLayout.CENTER);
-        add(inputPanel, BorderLayout.SOUTH);
+        add(inputPanel, BorderLayout.NORTH);
+        add(buttonPanel, BorderLayout.SOUTH);
 
         addButton.addActionListener(e -> {
             String name = nameField.getText();

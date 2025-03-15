@@ -34,14 +34,14 @@ class ContactBookManager {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Save to File");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV, TXT, or MD Files", "csv", "txt", "md"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("CSV", "csv"));
 
         int userSelection = fileChooser.showSaveDialog(parent);
 
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToSave = fileChooser.getSelectedFile();
             String fileName = fileToSave.getName();
-            String extension = ((FileNameExtensionFilter) fileChooser.getFileFilter()).getExtensions()[0];
+            String extension = ((FileNameExtensionFilter) fileChooser.getFileFilter()).getExtensions()[0];  //for now we only allow CSV
             if (!fileName.endsWith("." + extension)) {
                 fileToSave = new File(fileToSave.getParentFile(), fileName + "." + extension);
             }
@@ -51,9 +51,9 @@ class ContactBookManager {
                 for (ContactBookEntry entry : entries) {
                     writer.append(entry.getName()).append(",").append(entry.getPhoneNumber()).append("\n");
                 }
-                JOptionPane.showMessageDialog(parent, "Phonebook saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(parent, "Contact book saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(parent, "Error saving phonebook.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(parent, "Error saving contact book.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -80,9 +80,9 @@ class ContactBookManager {
                         addEntry(data[0].trim(), data[1].trim());
                     }
                 }
-                JOptionPane.showMessageDialog(parent, "Phonebook loaded successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(parent, "Contact book loaded successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(parent, "Error loading phonebook.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(parent, "Error loading contact book.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
