@@ -2,8 +2,6 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
 class MainFrame extends JFrame {
@@ -14,14 +12,14 @@ class MainFrame extends JFrame {
 
     public MainFrame() {
         contactBookManager = new ContactBookManager();
-        tableModel = new DefaultTableModel(new Object[] { "Name", "Contact Number" }, 0);
+        tableModel = new DefaultTableModel(new Object[]{"Name", "Street", "City", "State", "Phone", "Email"}, 0);
         phoneBookTable = new JTable(tableModel);
         searchField = new JTextField();
 
         setTitle("Contact Book");
-        setSize(800, 600);
+        setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10, 10));
 
         // Menu bar
         JMenuBar menuBar = new JMenuBar();
@@ -30,53 +28,80 @@ class MainFrame extends JFrame {
         JMenuItem loadItem = new JMenuItem("Load from File");
         JMenuItem exitItem = new JMenuItem("Exit");
 
-        // Action listeners for menu items
         saveItem.addActionListener(e -> contactBookManager.saveToFile(this));
         loadItem.addActionListener(e -> loadPhoneBook());
-        exitItem.addActionListener(e -> System.exit(0)); // Exit the application
+        exitItem.addActionListener(e -> System.exit(0));
 
         fileMenu.add(saveItem);
         fileMenu.add(loadItem);
-        fileMenu.add(exitItem); // Add the Exit item to the menu
+        fileMenu.add(exitItem);
         menuBar.add(fileMenu);
         setJMenuBar(menuBar);
 
         // Input panel
-        JPanel inputPanel = new JPanel(new GridLayout(4, 2));
-        JPanel buttonPanel = new JPanel(new BorderLayout());
+        JPanel inputPanel = new JPanel(new GridLayout(3, 4, 5, 5));
         JTextField nameField = new JTextField();
+        JTextField streetField = new JTextField();
+        JTextField cityField = new JTextField();
+        JTextField stateField = new JTextField();
         JTextField phoneField = new JTextField();
+        JTextField emailField = new JTextField();
+
+        inputPanel.add(new JLabel("Name:"));
+        inputPanel.add(nameField);
+        inputPanel.add(new JLabel("Street:"));
+        inputPanel.add(streetField);
+        inputPanel.add(new JLabel("City:"));
+        inputPanel.add(cityField);
+        inputPanel.add(new JLabel("State:"));
+        inputPanel.add(stateField);
+        inputPanel.add(new JLabel("Phone:"));
+        inputPanel.add(phoneField);
+        inputPanel.add(new JLabel("Email:"));
+        inputPanel.add(emailField);
+
+        JPanel buttonPanel = new JPanel();
         JButton addButton = new JButton("Add");
         JButton deleteButton = new JButton("Delete Selected");
         JButton deleteAllButton = new JButton("Delete All");
 
-        inputPanel.add(new JLabel("Search:"));
-        inputPanel.add(searchField);
-        inputPanel.add(new JLabel("Enter Name:"));
-        inputPanel.add(nameField);
-        inputPanel.add(new JLabel("Enter Phone Number:"));
-        inputPanel.add(phoneField);
-        inputPanel.add(addButton);
-        inputPanel.add(deleteButton);
+        buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
         buttonPanel.add(deleteAllButton);
+
+        // Top panel (search + input fields)
+        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchPanel.add(new JLabel("Search: "), BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        topPanel.add(searchPanel, BorderLayout.NORTH);
+        topPanel.add(inputPanel, BorderLayout.CENTER);
 
         // Add components to the frame
         JScrollPane tableScrollPane = new JScrollPane(phoneBookTable);
+        add(topPanel, BorderLayout.NORTH);
         add(tableScrollPane, BorderLayout.CENTER);
-        add(inputPanel, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.SOUTH);
 
         // Action listeners
         addButton.addActionListener(e -> {
             String name = nameField.getText();
+            String street = streetField.getText();
+            String city = cityField.getText();
+            String state = stateField.getText();
             String phone = phoneField.getText();
+            String email = emailField.getText();
             if (!name.isEmpty() && !phone.isEmpty()) {
-                contactBookManager.addEntry(name, phone);
-                tableModel.addRow(new Object[]{name, phone});
+                contactBookManager.addEntry(name, street, city, state, phone, email);
+                updateTableModel();
                 nameField.setText("");
+                streetField.setText("");
+                cityField.setText("");
+                stateField.setText("");
                 phoneField.setText("");
+                emailField.setText("");
             } else {
-                JOptionPane.showMessageDialog(null, "Both fields must be filled!", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Name and phone must be filled!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -84,15 +109,15 @@ class MainFrame extends JFrame {
             int selectedRow = phoneBookTable.getSelectedRow();
             if (selectedRow != -1) {
                 contactBookManager.deleteEntry(selectedRow);
-                tableModel.removeRow(selectedRow);
+                updateTableModel();
             }
         });
 
         deleteAllButton.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete all entries?", "Delete All? Sure???", JOptionPane.YES_NO_OPTION);
+            int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete all entries?", "Delete All?", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 contactBookManager.clearEntries();
-                tableModel.setRowCount(0); // Clear all rows
+                updateTableModel();
             }
         });
 
@@ -112,35 +137,19 @@ class MainFrame extends JFrame {
                 filterTable();
             }
         });
-
-        // Set table properties
-        phoneBookTable.setShowGrid(false);  // Hide gridlines
-        phoneBookTable.setIntercellSpacing(new Dimension(0, 0));  // Remove cell spacing
-
-        // Customize the first row background color
-        phoneBookTable.getTableHeader().setReorderingAllowed(false);  // Disable column reordering
-        phoneBookTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                label.setBackground(new Color(221, 255, 221)); // Light GREEN color for first row
-
-                // Set foreground color for selected rows
-                if (isSelected) {
-                    label.setBackground(Color.BLUE);
-                    label.setForeground(Color.WHITE);
-                }
-                return label;
-            }
-        });
     }
 
     private void filterTable() {
         String filter = searchField.getText().toLowerCase();
-        tableModel.setRowCount(0); // Clear the table
+        tableModel.setRowCount(0);
         for (ContactBookEntry entry : contactBookManager.getEntries()) {
-            if (entry.getName().toLowerCase().contains(filter) || entry.getPhoneNumber().contains(filter)) {
-                tableModel.addRow(new Object[]{entry.getName(), entry.getPhoneNumber()});
+            if (entry.getName().toLowerCase().contains(filter) ||
+                    entry.getStreet().toLowerCase().contains(filter) ||
+                    entry.getCity().toLowerCase().contains(filter) ||
+                    entry.getState().toLowerCase().contains(filter) ||
+                    entry.getPhoneNumber().contains(filter) ||
+                    entry.getEmail().toLowerCase().contains(filter)) {
+                tableModel.addRow(new Object[]{entry.getName(), entry.getStreet(), entry.getCity(), entry.getState(), entry.getPhoneNumber(), entry.getEmail()});
             }
         }
     }
@@ -151,9 +160,9 @@ class MainFrame extends JFrame {
     }
 
     private void updateTableModel() {
-        tableModel.setRowCount(0); // Clear the table
+        tableModel.setRowCount(0);
         for (ContactBookEntry entry : contactBookManager.getEntries()) {
-            tableModel.addRow(new Object[]{entry.getName(), entry.getPhoneNumber()});
+            tableModel.addRow(new Object[]{entry.getName(), entry.getStreet(), entry.getCity(), entry.getState(), entry.getPhoneNumber(), entry.getEmail()});
         }
     }
 

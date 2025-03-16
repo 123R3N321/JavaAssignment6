@@ -12,8 +12,8 @@ class ContactBookManager {
         entries = new ArrayList<>();
     }
 
-    public void addEntry(String name, String phoneNumber) {
-        entries.add(new ContactBookEntry(name, phoneNumber));
+    public void addEntry(String name, String street, String city, String state, String phoneNumber, String email) {
+        entries.add(new ContactBookEntry(name, street, city, state, phoneNumber, email));
     }
 
     public void deleteEntry(int index) {
@@ -41,15 +41,15 @@ class ContactBookManager {
         if (userSelection == JFileChooser.APPROVE_OPTION) {
             File fileToSave = fileChooser.getSelectedFile();
             String fileName = fileToSave.getName();
-            String extension = ((FileNameExtensionFilter) fileChooser.getFileFilter()).getExtensions()[0];  //for now we only allow CSV
+            String extension = "csv";
             if (!fileName.endsWith("." + extension)) {
                 fileToSave = new File(fileToSave.getParentFile(), fileName + "." + extension);
             }
 
             try (FileWriter writer = new FileWriter(fileToSave)) {
-                writer.append("Name,Phone Number\n");
+                writer.append("Name,Street,City,State,Phone Number,Email\n");
                 for (ContactBookEntry entry : entries) {
-                    writer.append(entry.getName()).append(",").append(entry.getPhoneNumber()).append("\n");
+                    writer.append(String.join(",", entry.getName(), entry.getStreet(), entry.getCity(), entry.getState(), entry.getPhoneNumber(), entry.getEmail())).append("\n");
                 }
                 JOptionPane.showMessageDialog(parent, "Contact book saved successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
@@ -71,13 +71,12 @@ class ContactBookManager {
 
             try (BufferedReader reader = new BufferedReader(new FileReader(fileToOpen))) {
                 String line;
+                boolean isFirstLine = true;
                 while ((line = reader.readLine()) != null) {
-                    // Skip the header line
-                    if (line.startsWith("Name")) continue;
-
+                    if (isFirstLine) { isFirstLine = false; continue; }
                     String[] data = line.split(",");
-                    if (data.length == 2) {
-                        addEntry(data[0].trim(), data[1].trim());
+                    if (data.length == 6) {
+                        addEntry(data[0].trim(), data[1].trim(), data[2].trim(), data[3].trim(), data[4].trim(), data[5].trim());
                     }
                 }
                 JOptionPane.showMessageDialog(parent, "Contact book loaded successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
